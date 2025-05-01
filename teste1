@@ -1,0 +1,28 @@
+# Carregar o conjunto de dados mtcars
+data(mtcars)
+
+# Exibir as primeiras linhas do conjunto de dados
+head(mtcars)
+
+# Calcular a média, variância e desvio padrão da coluna 'mpg' (milhas por galão)
+media_mpg <- mean(mtcars$mpg)
+variancia_mpg <- var(mtcars$mpg)
+desvio_padrao_mpg <- sd(mtcars$mpg)
+
+# Exibir os resultados
+print(paste("Média do mpg:", media_mpg))
+print(paste("Variância do mpg:", variancia_mpg))
+print(paste("Desvio Padrão do mpg:", desvio_padrao_mpg))
+
+# Criar um documento XML com os resultados
+library(xml2)
+doc <- xml_new_root("Resultados")
+xml_add_child(doc, "MediaMPG", media_mpg)
+xml_add_child(doc, "VarianciaMPG", variancia_mpg)
+xml_add_child(doc, "DesvioPadraoMPG", desvio_padrao_mpg)
+
+# Salvar o documento XML em um arquivo
+write_xml(doc, "resultados_mtcars.xml")
+
+# Exibir o documento XML
+print(as.character(doc))

@@ -1,0 +1,45 @@
+# Instalar e carregar o pacote ggplot2
+install.packages("ggplot2")
+library(ggplot2)
+
+# Carregar o conjunto de dados mtcars
+data(mtcars)
+
+# Exibir as primeiras linhas do conjunto de dados
+head(mtcars)
+
+# Calcular a média, variância e desvio padrão da coluna 'mpg' (milhas por galão)
+media_mpg <- mean(mtcars$mpg)
+variancia_mpg <- var(mtcars$mpg)
+desvio_padrao_mpg <- sd(mtcars$mpg)
+
+# Exibir os resultados
+print(paste("Média do mpg:", media_mpg))
+print(paste("Variância do mpg:", variancia_mpg))
+print(paste("Desvio Padrão do mpg:", desvio_padrao_mpg))
+
+# Criar um data frame com os resultados
+resultados <- data.frame(
+  Métrica = c("Média", "Variância", "Desvio Padrão"),
+  Valor = c(media_mpg, variancia_mpg, desvio_padrao_mpg)
+)
+
+# Salvar o data frame em um arquivo CSV
+write.csv(resultados, "resultados_mtcars.csv", row.names = FALSE)
+
+# Criar o gráfico de dispersão com a linha de regressão linear
+ggplot(mtcars, aes(x = wt, y = mpg)) +
+  geom_point() +  # Adicionar pontos de dispersão
+  geom_smooth(method = "lm", col = "blue") +  # Adicionar linha de regressão linear
+  labs(title = "Regressão Linear entre Peso e MPG",
+       x = "Peso (1000 lbs)",
+       y = "Milhas por Galão (MPG)") +
+  theme_minimal() +  # Usar um tema minimalista
+  theme(panel.background = element_rect(fill = "white", color = "white"),  # Fundo branco
+        plot.background = element_rect(fill = "white", color = "white"))  # Fundo branco
+
+# Salvar o gráfico em um arquivo
+ggsave("regressao_linear_mtcars.png")
+
+# Exibir o data frame
+print(resultados)

@@ -1,0 +1,49 @@
+# Instalar e carregar os pacotes necessários
+if (!requireNamespace("readr", quietly = TRUE)) install.packages("readr")
+if (!requireNamespace("ggplot2", quietly = TRUE)) install.packages("ggplot2")
+if (!requireNamespace("dplyr", quietly = TRUE)) install.packages("dplyr")
+
+library(readr)
+library(ggplot2)
+library(dplyr)
+
+# Ler o arquivo CSV como texto e converter para UTF-8
+tryCatch({
+  lines <- readLines("c:/Users/Acer/Downloads/Base de dados de Registros de Aquicultores(in).csv", encoding = "ISO-8859-1")
+  lines_utf8 <- iconv(lines, "ISO-8859-1", "UTF-8", sub = "")
+  temp_file <- tempfile(fileext = ".csv")
+  writeLines(lines_utf8, temp_file, useBytes = TRUE)
+  planilha <- read.csv(temp_file, fileEncoding = "UTF-8", check.names = FALSE)
+  print("Arquivo lido com sucesso.")
+}, error = function(e) {
+  print("Falha ao ler o arquivo.")
+  stop("Não foi possível ler o arquivo CSV.")
+})
+
+# Limpar os nomes das colunas
+colnames(planilha) <- iconv(colnames(planilha), "UTF-8", "UTF-8", sub = "")
+
+# Remover as colunas problemáticas
+planilha$`Nome / Razão Social` <- NULL
+planilha$`Número no RGP` <- NULL
+
+# Verificar se a coluna "Quantidade" existe no dataframe
+if ("Quantidade" %in% colnames(planilha)) {
+  print("A coluna 'Quantidade' foi encontrada.")
+
+  # Limpar caracteres inválidos na coluna "Quantidade"
+  planilha$Quantidade <- as.numeric(iconv(planilha$Quantidade, "UTF-8", "UTF-8", sub = ""))
+
+  # Criar o gráfico de box plot para mostrar os outliers
+  ggplot(planilha, aes(y = Quantidade)) +
+    geom_boxplot(fill = "lightblue", color = "black", outlier.colour = "red", outlier.shape = 19) +
+    labs(title = "Boxplot da Quantidade com Outliers",
+         y = "Quantidade") +
+    theme_minimal()
+} else {
+  print("A coluna 'Quantidade' não foi encontrada no dataframe.")
+  print(colnames(planilha)) # Exibir os nomes das colunas para ajudar a identificar possíveis erros
+}
+
+# Exibir os avisos
+warnings()

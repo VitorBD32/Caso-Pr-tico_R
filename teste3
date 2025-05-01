@@ -1,0 +1,48 @@
+# Instalar e carregar os pacotes necessários
+if (!requireNamespace("readr", quietly = TRUE)) install.packages("readr")
+if (!requireNamespace("ggplot2", quietly = TRUE)) install.packages("ggplot2")
+if (!requireNamespace("dplyr", quietly = TRUE)) install.packages("dplyr")
+
+library(readr)
+library(ggplot2)
+library(dplyr)
+
+# Corrigir o caminho do arquivo CSV
+caminho_arquivo <- "E:/CIÊNCIAS DA COMPUTAÇÃO/5º PERÍODO/Atividade de Extensão 4/ESTUDO DE CASO/Base de dados de Registros de Aquicultores(in).csv"
+
+# Ler o arquivo CSV com delimitador ";"
+planilha <- read_delim(caminho_arquivo, 
+                      delim = ";", 
+                      locale = locale(encoding = "ISO-8859-1"), 
+                      col_names = TRUE, 
+                      show_col_types = FALSE)
+
+# Exibir as primeiras linhas do conjunto de dados
+head(planilha)
+
+# Exibir o conjunto de dados completo em uma aba separada
+View(planilha)
+
+# Criar gráficos de barra para diferentes atividades de aquicultura
+# Supondo que a coluna com as atividades de aquicultura seja chamada "Tipo de atividade"
+
+# Contar o número de registros para cada atividade
+atividade_counts <- planilha %>%
+  group_by(`Tipo de atividade`) %>%
+  summarise(Count = n())
+
+# Criar o gráfico de barra
+ggplot(atividade_counts, aes(x = `Tipo de atividade`, y = Count)) +
+  geom_bar(stat = "identity", fill = "blue") +
+  labs(title = "Distribuição das Atividades de Aquicultura",
+       x = "Atividade",
+       y = "Número de Registros") +
+  theme_minimal() +
+  theme(
+    panel.background = element_rect(fill = "white", color = "white"),  # Fundo branco do painel
+    plot.background = element_rect(fill = "white", color = "white"),  # Fundo branco do gráfico
+    axis.text.x = element_text(angle = 45, hjust = 1) # Rotacionar os rótulos do eixo x para melhor legibilidade
+  )
+
+# Salvar o gráfico em um arquivo
+ggsave("distribuicao_atividades_aquicultura.png")

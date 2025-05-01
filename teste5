@@ -1,0 +1,38 @@
+# Instalar e carregar os pacotes necessários
+if (!requireNamespace("readr", quietly = TRUE)) install.packages("readr")
+if (!requireNamespace("dplyr", quietly = TRUE)) install.packages("dplyr")
+
+library(readr)
+library(dplyr)
+
+# Ler o arquivo CSV com delimitador ";"
+planilha <- read_delim("c:/Users/Acer/Downloads/Base de dados de Registros de Aquicultores(in).csv", 
+                      delim = ";", 
+                      locale = locale(encoding = "ISO-8859-1"), 
+                      col_names = TRUE, 
+                      show_col_types = FALSE)
+
+# Padronizar os nomes das atividades
+planilha$`Tipo de atividade` <- gsub("\\(.*?\\)", "", planilha$`Tipo de atividade`)
+planilha$`Tipo de atividade` <- trimws(planilha$`Tipo de atividade`)
+
+# Filtrar os dados para cultivo de peixes em tanque escavado
+peixes_tanque_escavado <- planilha %>%
+  filter(`Tipo de atividade` == "Cultivo de peixes em Tanque escavado")
+
+# Calcular o número de homens e mulheres
+genero_counts <- peixes_tanque_escavado %>%
+  group_by(Gênero) %>%
+  summarise(Quantidade = n())
+
+# Calcular a média, variância e desvio padrão para cada gênero
+estatisticas_genero <- genero_counts %>%
+  summarise(
+    Media = mean(Quantidade, na.rm = TRUE),
+    Variancia = var(Quantidade, na.rm = TRUE),
+    DesvioPadrao = sd(Quantidade, na.rm = TRUE)
+  )
+
+# Exibir os resultados
+print(genero_counts)
+print(estatisticas_genero)

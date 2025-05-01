@@ -1,0 +1,29 @@
+# Instalação dos pacotes (comentado para evitar reinstalações desnecessárias)
+
+install.packages("readr")
+install.packages("readxl")
+install.packages("writexl")
+install.packages("dplyr")
+install.packages("ggplot2")
+install.packages("tidyverse")
+
+library(readr)
+
+# Caminho do arquivo (relativo ou absoluto, dependendo da sua estrutura de diretórios)
+
+caminho_arquivo <- "conjunto-dados.csv"  # Assumindo que o arquivo está no mesmo diretório do script
+
+# Tentativa de leitura do arquivo com tratamento de erro
+
+dados <- tryCatch({
+  read_csv(caminho_arquivo)
+}, error = function(e) {
+  stop(paste("Erro ao ler o arquivo:", e$message, "\nVerifique se o arquivo existe no caminho especificado."))
+})
+
+# Imprime os dados (se a leitura for bem-sucedida)
+
+
+if (!is.null(dados)) {
+  print(dados)
+}
